@@ -1,0 +1,11 @@
+# dirctories
+.vscode/
+dist/
+node_modules/
+
+# files
+*.pdf
+.env.*
+
+# system files
+.DS_Store

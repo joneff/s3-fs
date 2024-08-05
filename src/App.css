@@ -1,0 +1,146 @@
+.hstack {
+    display: flex;
+    flex-flow: row nowrap;
+}
+.vstack {
+    display: flex;
+    flex-flow: column nowrap;
+}
+.spacer {
+    flex-grow: 1;
+}
+
+
+.navbar {
+    padding: 8px;
+    background: #333333;
+    color: #ffffff;
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 4px;
+    position: sticky;
+    top: 0;
+}
+.navbar a {
+    color: #dddddd;
+}
+.navbar a:hover {
+    color: #ffffff;
+}
+
+.main {
+    padding: 20px;
+}
+
+
+.form {
+    max-width: 800px;
+    margin: auto;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 20px;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+}
+.form-actions {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+
+.button {
+    border-radius: 4px;
+    border-color: #336699;
+    background-color: #336699;
+    color: #ffffff;
+}
+.button:hover,
+.button:focus,
+.button:active {
+    border-color: #114477;
+    background-color: #114477;
+}
+.button:focus,
+.button:active {
+    outline: 2px solid #ffffff;
+    outline-offset: -3px;
+}
+
+.input[type="text"] {
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #cccccc;
+    background: #ffffff;
+    color: #000000;
+}
+.input[type="text"]:hover {
+    border-color: #aaaaaa;
+}
+.input[type="text"]:focus-within {
+    outline: 2px solid #336699;
+    outline-offset: -1px;
+}
+
+
+.file-browser {
+    display: flex;
+    flex-flow: row nowrap;
+}
+.navigation-pane {
+    width: 200px;
+    flex: none;
+}
+.preview-pane {
+    flex: 1;
+}
+
+
+.treeview,
+.treeview ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.treeview li li {
+    padding-inline-start: 20px;
+}
+.treeview .toggle {
+    padding: 0;
+    border: 0;
+    width: 1rem;
+    height: 1rem;
+    line-height: 1;
+    background: none;
+}
+
+
+.table {
+    border: 1px solid #cccccc;
+    width: 100%;
+    border-collapse: collapse;
+}
+.table thead,
+.table tbody,
+.table tfoot {
+    border-color: inherit;
+}
+.table th,
+.table td {
+    padding: 4px 8px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+}
+.table th {
+    font-weight: bold;
+    text-align: start;
+}
+.table thead {
+    background-color: #f0f0f0;
+}
+.table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
