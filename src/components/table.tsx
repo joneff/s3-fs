@@ -1,36 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { Link } from 'react-router-dom';
+import { folderIcon, fileIcon } from '@progress/kendo-svg-icons';
+import { Icon } from './icon';
 
-import { S3Client } from '../client/s3-client';
-
-export function Table() {
-    const [data, setData] = useState([] as any[]);
-
-    const [loginInfo] = useLocalStorage('loginInfo', null);
-    const fetchData = useCallback(async (nodePath? : string) => {
-        // @ts-ignore
-        const bucket = (loginInfo as {bucket: string}).bucket;
-        // @ts-ignore
-        const client = new S3Client(loginInfo);
-        const rawData : any[] = await client.ls(bucket, nodePath);
-        const newData : any[] = [];
-
-        rawData.forEach(item => {
-            const newItem = {
-                text: item.Key.slice(0, -1).split('/').pop(),
-                path: item.Key,
-                items: item.Key.endsWith('/') ? [] : undefined
-            };
-            newData.push(newItem);
-        });
-
-        setData(newData);
-
-    }, [data]);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
+export function Table(props) {
+    const {
+        data
+    } = props;
 
     return (
         <>
@@ -46,7 +21,19 @@ export function Table() {
                     {data.map((item, i) => {
                         return (
                             <tr key={i.toString() + item.path}>
-                                <td>{item.text}</td>
+                                <td>
+                                    {
+                                        item.hasChildren
+                                            ? <Link reloadDocument to={item.path}>
+                                                <Icon icon={folderIcon} />
+                                                {item.text}
+                                            </Link>
+                                            : <span>
+                                                <Icon icon={fileIcon} />
+                                                {item.text}
+                                            </span>
+                                    }
+                                </td>
                             </tr>
                         );
                     })}

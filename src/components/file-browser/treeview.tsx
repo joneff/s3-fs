@@ -9,7 +9,8 @@ interface TreeviewDataItem {
     path: string,
     items: TreeviewDataItem[],
     hasChildren: boolean,
-    expanded: boolean
+    expanded: boolean,
+    selected: boolean
 }
 
 
@@ -57,7 +58,8 @@ function findRec(path: string, array: TreeviewDataItem[]) {
 // #endregion
 
 
-export function FileBrowserTreeview() {
+export function FileBrowserTreeview(props) {
+    const selected = props.selected;
     const [data, setData] = useState([] as any[]);
     const [loginInfo] = useLocalStorage('loginInfo', null);
 
@@ -76,8 +78,10 @@ export function FileBrowserTreeview() {
                     path: item.Key,
                     items: [],
                     hasChildren: false,
-                    expanded: false
+                    expanded: false,
+                    selected: selected === item.Key
                 };
+
                 tmpData.push(newItem);
             }
         });
@@ -94,7 +98,7 @@ export function FileBrowserTreeview() {
 
     return (
         <>
-            <Treeview data={data} />
+            <Treeview data={data} selected={selected} />
         </>
     );
 }

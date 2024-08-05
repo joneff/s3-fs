@@ -1,15 +1,17 @@
 import { useCallback, useState } from 'react';
 import classNames from "classnames";
+import { Link } from 'react-router-dom';
+
 import { caretAltDownIcon, caretAltRightIcon } from '@progress/kendo-svg-icons';
 
 import { Icon } from './icon';
 
-export function Treeview({data}) {
+export function Treeview({data, selected}) {
     return (
         <>
             <div className="treeview">
                 <TreeviewGroup>
-                    <TreeviewNode text="Root" expanded={true} items={data} />
+                    <TreeviewNode text="Root" path={'/'} expanded={true} selected={selected === undefined} items={data} />
                 </TreeviewGroup>
             </div>
         </>
@@ -50,20 +52,31 @@ function TreeviewNode(props) {
 
     const {
         text,
+        path,
         expanded,
-        items
+        items,
+        selected
     } = props;
 
     const [isExpanded, setExpanded] = useState(expanded || false);
+    const [isSelected, setSelected] = useState(selected || false);
+
     const toggleClick = useCallback(() => {
         setExpanded(!isExpanded);
     }, [isExpanded]);
 
     const tvnClassName = classNames(
         'treeview-node',
+        {
+            'selected': isSelected === true
+        }
     );
-
-    console.log('isExpanded', text, isExpanded);
+    const tvlClassName = classNames(
+        'treeview-leaf',
+        {
+            'selected': isSelected === true
+        }
+    )
 
     return (
         <>
@@ -74,7 +87,7 @@ function TreeviewNode(props) {
                             <Icon icon={isExpanded ? caretAltDownIcon : caretAltRightIcon} />
                         </span>
                     </>}
-                    <span className="treeview-leaf">{text}</span>
+                    <Link reloadDocument to={`/browse/${path === '/' ? '' : path}`} className={tvlClassName}>{text}</Link>
                 </span>
                 {items.length !== 0 && <>
                     <TreeviewGroup items={items} hidden={!isExpanded} />

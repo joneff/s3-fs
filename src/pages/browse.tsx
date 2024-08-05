@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from "@uidotdev/usehooks";
 
 import { FileBrowserTreeview } from '../components/file-browser/treeview';
-import { Table } from '../components/table';
+import { FileBrowserTable } from '../components/file-browser/table';
 
 export default function BrowserPage() {
     const navigate = useNavigate();
+    const cwd = useParams()['*'];
     const [loginInfo] = useLocalStorage('loginInfo', null);
 
     useEffect(() => {
@@ -15,15 +16,14 @@ export default function BrowserPage() {
         }
     }, [loginInfo]);
 
-
     return (
         <>
             <div className="file-browser">
                 <div className="navigation-pane">
-                    <FileBrowserTreeview />
+                    <FileBrowserTreeview selected={cwd} />
                 </div>
                 <div className="preview-pane">
-                    <Table />
+                    <FileBrowserTable dir={cwd} />
                 </div>
             </div>
         </>

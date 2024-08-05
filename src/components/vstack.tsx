@@ -9,8 +9,6 @@ export function VStack(props) {
         ...rest
     } = props;
 
-    console.log(className);
-
     const boxClassName = classNames(
         className,
         'vstack'
