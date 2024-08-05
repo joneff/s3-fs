@@ -41,3 +41,18 @@ button {
     font-size: 1rem;
     line-height: 1rlh;
 }
+
+.hidden {
+    display: none !important;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    display: inline-flex;
+    place-items: center;
+}
+.icon > svg {
+    fill: currentColor;
+    flex: 1 1 auto;
+}

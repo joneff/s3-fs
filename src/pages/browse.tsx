@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from "@uidotdev/usehooks";
 
-import { TreeView } from '../components/treeview';
+import { FileBrowserTreeview } from '../components/file-browser/treeview';
 import { Table } from '../components/table';
 
 export default function BrowserPage() {
@@ -20,7 +20,7 @@ export default function BrowserPage() {
         <>
             <div className="file-browser">
                 <div className="navigation-pane">
-                    <TreeView />
+                    <FileBrowserTreeview />
                 </div>
                 <div className="preview-pane">
                     <Table />
