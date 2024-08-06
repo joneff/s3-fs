@@ -148,6 +148,15 @@
     background-color: #336699;
 }
 
+.toolbar {
+    padding: 8px;
+    background: #cccccc;
+    color: #000000;
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 4px;
+}
+
 
 .table {
     border: 1px solid #cccccc;

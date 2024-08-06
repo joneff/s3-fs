@@ -31,7 +31,8 @@ export function FileBrowserTable(props) {
     }, [data]);
 
     useEffect(() => {
-        fetchData(dir);
+        console.log(dir);
+        fetchData(dir === '' ? undefined : dir);
     }, []);
 
     return (
