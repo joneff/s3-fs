@@ -1,0 +1,28 @@
+{
+  "name": "@joneff/s3-client",
+  "version": "0.0.0-DEVELOPMENT",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint ./src --ext .ts",
+    "prebuild": "rimraf dist",
+    "build": "npx rollup -c ./rollup.config.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1669.0"
+  },
+  "devDependencies": {}
+}

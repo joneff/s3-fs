@@ -1,0 +1,71 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "ignorePatterns": [
+        "src/Utils/AwaitEventEmitter.ts"
+    ],
+    "rules": {
+        "no-var": "off",
+        "prefer-const": "off",
+        "@typescript-eslint/ban-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-inferrable-types": "off"
+    },
+    "overrides": [
+        // #region root files
+        {
+            "files": [
+                "jest.config.js",
+                "jest.e2e.config.js"
+            ],
+            "env": {
+                "node": true
+            },
+            "parserOptions": {
+                "sourceType": "module"
+            }
+        },
+        // #endregion
+
+
+        // #region test
+        {
+            "files": [
+                "test/**/*.ts",
+                "test/**/*.js"
+            ],
+            "env": {
+                "browser": true,
+                "node": true,
+                "es6": true,
+                "es2022": true,
+                "jquery": true,
+                "jest": true
+            },
+            "parserOptions": {
+                "sourceType": "module"
+            }
+        },
+        {
+            "files": [
+                "test/_global.setup.js",
+                "test/_global.teardown.js",
+                "test/_jest.setup.js"
+            ],
+            "env": {
+                "node": true
+            },
+            "parserOptions": {
+                "sourceType": "commonjs"
+            }
+        }
+        // #endregion
+    ]
+}

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from "@uidotdev/usehooks";
 
-import { S3Client } from '../client/s3-client';
+import { S3Client } from '@joneff/s3-client';
 import { FileBrowserTreeview } from '../components/file-browser/treeview';
 import { FileBrowserTable } from '../components/file-browser/table';
 

@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { S3Client } from '../dist/cjs/client.cjs';
+import { S3Client } from '@joneff/s3-client';
 
 config({
     path: [
