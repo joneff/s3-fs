@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from "@uidotdev/usehooks";
 
 import { S3Client } from '@joneff/s3-client';
-import { Table } from '../table';
+import { Table } from '@joneff/react-ui';
 
 export function FileBrowserTable(props) {
     const dir = props.dir;

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLocalStorage } from "@uidotdev/usehooks";
-import { HStack } from '../components/hstack';
+import { HStack } from '@joneff/react-ui';
 // import { VStack } from '../components/vstack';
 
 export default function HomePage() {

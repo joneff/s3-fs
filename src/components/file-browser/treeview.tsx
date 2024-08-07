@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from "@uidotdev/usehooks";
 
 import { S3Client } from '@joneff/s3-client';
-import { Treeview } from '../treeview';
+import { Treeview } from '@joneff/react-ui';
 
 interface TreeviewDataItem {
     text: string,

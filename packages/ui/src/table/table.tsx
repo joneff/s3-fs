@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { folderIcon, fileIcon } from '@progress/kendo-svg-icons';
-import { Icon } from './icon';
+import { Icon } from '../icon';
 
 export function Table(props) {
     const {

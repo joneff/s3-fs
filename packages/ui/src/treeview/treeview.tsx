@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { caretAltDownIcon, caretAltRightIcon } from '@progress/kendo-svg-icons';
 
-import { Icon } from './icon';
+import { Icon } from '../icon';
 
 export function Treeview({data, selected}) {
     return (

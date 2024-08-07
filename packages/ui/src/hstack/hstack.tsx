@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { Box } from './box';
+import { Box } from '../box';
 
-export function VStack(props) {
+export function HStack(props) {
     const {
         children,
         className,
@@ -11,7 +11,7 @@ export function VStack(props) {
 
     const boxClassName = classNames(
         className,
-        'vstack'
+        'hstack'
     );
 
     return (
