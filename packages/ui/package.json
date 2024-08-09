@@ -19,6 +19,7 @@
     "lint": "eslint ./src --ext .ts",
     "prebuild": "rimraf dist",
     "build": "npx rollup -c ./rollup.config.js",
+    "dev": "vite",
     "test": "jest"
   },
   "dependencies": {
