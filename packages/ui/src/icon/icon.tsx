@@ -1,3 +1,5 @@
+import './styles/icon.css';
+
 export function Icon({icon}) {
     return (
         <>
