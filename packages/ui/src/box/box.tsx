@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { classNames } from '../common';
 
 export function Box(props) {
     const {

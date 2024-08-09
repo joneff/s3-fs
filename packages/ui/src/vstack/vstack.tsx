@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { classNames } from '../common';
 import { Box } from '../box';
 
 export function VStack(props) {
