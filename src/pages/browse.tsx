@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from "@uidotdev/usehooks";
 
 import { S3Client } from '@joneff/s3-client';
+import { Button } from '@joneff/react-ui';
 import { FileBrowserTreeview } from '../components/file-browser/treeview';
 import { FileBrowserTable } from '../components/file-browser/table';
 
@@ -48,7 +49,7 @@ export default function BrowserPage() {
                 <div className="preview-pane">
                     <div className="toolbar">
                         <span className="spacer"></span>
-                        <button onClick={handleMkDir}>Create directory</button>
+                        <Button onClick={handleMkDir}>Create directory</Button>
                         <label>
                             Upload file:
                             <input type="file" onChange={handleUpload} />

@@ -50,24 +50,6 @@
     justify-content: flex-end;
 }
 
-.button {
-    border-radius: 4px;
-    border-color: #336699;
-    background-color: #336699;
-    color: #ffffff;
-}
-.button:hover,
-.button:focus,
-.button:active {
-    border-color: #114477;
-    background-color: #114477;
-}
-.button:focus,
-.button:active {
-    outline: 2px solid #ffffff;
-    outline-offset: -3px;
-}
-
 .input[type="text"] {
     border-radius: 4px;
     border-width: 1px;
@@ -96,16 +78,6 @@
 .preview-pane {
     flex: 1;
 }
-
-.toolbar {
-    padding: 8px;
-    background: #cccccc;
-    color: #000000;
-    display: flex;
-    flex-flow: row nowrap;
-    gap: 4px;
-}
-
 
 .table {
     border: 1px solid #cccccc;

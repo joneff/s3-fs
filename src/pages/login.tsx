@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router';
 import { useLocalStorage } from "@uidotdev/usehooks";
+import { Button } from '@joneff/react-ui';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function LoginPage() {
             </label>
             <input type="hidden" name="region" value="eu-central-1" />
             <div className="form-actions">
-                <button type="submit" className="button">Login</button>
+                <Button type="submit" className="button">Login</Button>
             </div>
         </form>
     );
