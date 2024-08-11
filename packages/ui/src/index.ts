@@ -4,5 +4,6 @@ export * from './button';
 export * from './hstack';
 export * from './icon';
 export * from './table';
+export * from './toolbar';
 export * from './treeview';
 export * from './vstack';

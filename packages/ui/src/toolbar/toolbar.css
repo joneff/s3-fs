@@ -1,0 +1,51 @@
+.toolbar {
+    padding-inline: var(--toolbar-padding-x, .5rem);
+    padding-block: var(--toolbar-padding-y, .5rem);
+    border-width: var(--toolbar-border-width, 1px);
+    border-style: solid;
+    box-sizing: border-box;
+    font-family: var(--toolbar-font-family, inherit);
+    font-size: var(--toolbar-font-size, 1rem);
+    line-height: var(--toolbar-line-height, 1.5);
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: var(--toolbar-spacing, .5rem);
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+
+    & *,
+    &::before,
+    &::after {
+        box-sizing: inherit;
+    }
+}
+
+.k-toolbar > * {
+    flex-shrink: 0;
+    vertical-align: middle
+}
+
+.toolbar-separator {
+    width: 0;
+    height: 1lh;
+    border-width: 0;
+    border-inline-start-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+}
+
+.toolbar-spacer {
+    flex-grow: 1;
+}
+.toolbar-spacer-sized {
+    flex: none;
+}
+
+/* appearance */
+.toolbar {
+    background-color: var(--toolbar-bg, #f8f8f8);
+    color: var(--toolbar-text, #494949);
+    border-color: var(--toolbar-border, #d6d6d6);
+}
