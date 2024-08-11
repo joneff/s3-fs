@@ -1,0 +1,38 @@
+.button-group {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    position: relative;
+}
+
+.button-group > .button:where(:first-child):where(:not(:last-child)) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+.button-group > .button:where(:not(:first-child)):where(:not(:last-child)) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+.button-group > .button:where(:last-child):where(:not(:only-child)) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+.button-group > .button {
+    position: relative;
+    z-index: 1;
+
+    &:hover,
+    &.hover,
+    &:focus,
+    &.focus,
+    &:active,
+    &.active {
+        z-index: 2;
+    }
+}
+
+.button-group > .button + .button {
+    margin-inline-start: -1px;
+}
