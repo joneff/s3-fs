@@ -1,63 +1,77 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from '@uidotdev/usehooks';
 
-import { S3Client } from '@joneff/s3-client';
-import { Button } from '@joneff/react-ui';
-import { FileBrowserTreeview } from '../components/file-browser/treeview';
-import { FileBrowserTable } from '../components/file-browser/table';
+import { useFetchData, DataItem } from '../utils';
+import { FileBrowser } from '../components';
+
+type LoginInfo = {
+    bucket: string,
+    key: string,
+    secret: string,
+    region: string
+}
 
 export default function BrowserPage() {
     const navigate = useNavigate();
-    const cwd = useParams()['*'] || '';
-    const [loginInfo] = useLocalStorage('loginInfo', null);
+
+    const [loginInfo] : [null | LoginInfo, any] = useLocalStorage('loginInfo', null);
+    const [data, setData] = useState({ tree: [], files: [] } as { tree: DataItem[], files: DataItem[]});
+    const [cwd, setCwd] = useState(useParams()['*'] || '');
+    const [pathExists, setPathExists] = useState(undefined);
+    const fetchData = useFetchData(loginInfo!);
 
     useEffect(() => {
         if (loginInfo === null) {
             navigate('/login');
+            return;
         }
     }, [loginInfo]);
 
-    async function handleUpload(event) {
-        const target = event.target;
-        const files = target.files;
-        const client = new S3Client(loginInfo);
+    useEffect(() => {
+        if (loginInfo !== null) {
+            const result = fetchData(cwd);
 
-        for (const file of files) {
-            console.log(cwd, file.name)
-            await client.upload(loginInfo.bucket, `${cwd}${file.name}`, file);
+            result.then(result => {
+                if (result !== null) {
+                    // @ts-ignore
+                    setPathExists(true);
+                    const tree = result[0];
+                    const files = result[1];
+                    const currentItem = result[2];
+
+                    currentItem.selected = true;
+
+                    setData({ tree, files: [...(currentItem.items || []), ...files] });
+                } else {
+                    // @ts-ignore
+                    setPathExists(false);
+                }
+            });
         }
-    }
+    }, [cwd]);
 
-    async function handleMkDir() {
-        const dir = prompt('Directory name');
-
-        if (dir === '') {
-            return;
-        }
-
-        const client = new S3Client(loginInfo);
-        await client.mkdir(loginInfo.bucket, `${cwd}${dir}`);
+    function handleNavigation(cwd: string) {
+        console.log('handleNavigation ', cwd);
+        setCwd(cwd);
     }
 
     return (
         <>
-            <div className="file-browser">
-                <div className="navigation-pane">
-                    <FileBrowserTreeview selected={cwd} />
-                </div>
-                <div className="preview-pane">
-                    <div className="toolbar">
-                        <span className="spacer"></span>
-                        <Button onClick={handleMkDir}>Create directory</Button>
-                        <label>
-                            Upload file:
-                            <input type="file" onChange={handleUpload} />
-                        </label>
-                    </div>
-                    <FileBrowserTable dir={cwd} />
-                </div>
-            </div>
+            {pathExists === undefined && (
+                <div>Loading ...</div>
+            )}
+            {pathExists === true && (
+                <FileBrowser
+                    data={data}
+                    cwd={cwd}
+                    onNeedData={() => {}}
+                    onNavigation={handleNavigation}
+                ></FileBrowser>
+            )}
+            {pathExists === false && (
+                <div>Path not found</div>
+            )}
         </>
     );
 }

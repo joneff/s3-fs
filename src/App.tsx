@@ -10,8 +10,8 @@ import Home from './pages/home';
 import ErrorPage from './pages/error';
 import BrowserPage from './pages/browse';
 import LoginPage from './pages/login';
-import './App.css';
 import LogoutPage from './pages/logout';
+import './App.css';
 
 const router = createBrowserRouter([
     {

@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useLocalStorage } from "@uidotdev/usehooks";
-
-import { S3Client } from '@joneff/s3-client';
-import { Treeview } from '@joneff/react-ui';
+import { useCallback, useState } from 'react';
+import { Treeview, TreeviewProps, TreeviewItemClickEvent } from '@joneff/react-ui';
+import { Navigate, useNavigate } from 'react-router';
 
 interface TreeviewDataItem {
     text: string,
@@ -13,92 +11,60 @@ interface TreeviewDataItem {
     selected: boolean
 }
 
+type FileBrowserTreeviewProps = TreeviewProps & {
+    onNavigation: (cwd: string) => void;
+}
 
-// #region utils
-function listToTree(list: TreeviewDataItem[]) {
-    const result : TreeviewDataItem[] = [];
+export function FileBrowserTreeview(props: FileBrowserTreeviewProps & React.HTMLAttributes<HTMLDivElement>) {
+    const navigate = useNavigate();
+    const [cwd, setCwd] = useState('');
 
-    list.forEach((item: TreeviewDataItem) => {
-        const parts = item.path.slice(0, -1).split('/');
+    const {
+        data,
+        selected,
+        onNavigation,
+        ...rest
+    } = props;
 
-        if (parts.length === 1) {
-            result.push(item);
-        } else {
-            const match = findRec(parts.slice(0, -1).join('/'), result);
+    const onItemClick = useCallback((event: TreeviewItemClickEvent) => {
+        const { reactEvent, nativeEvent, itemId } = event;
+        const target = nativeEvent.target;
 
-            if (match) {
-                match.items.push(item);
-                match.hasChildren = true;
+        let currentElement : HTMLElement = nativeEvent.target;
+        const parts : string[] = [];
+
+        while (currentElement.parentElement !== null) {
+            if (currentElement.classList.contains('treeview')) {
+                break;
+            }
+            if (currentElement.classList.contains('treeview-item')) {
+                const textElement = currentElement.querySelector('.treeview-leaf > .treeview-leaf-text');
+                if (textElement) {
+                    parts.push(textElement.textContent || '');
+                }
+            }
+            currentElement = currentElement.parentElement;
+        }
+
+        if (typeof onNavigation === 'function') {
+            const _dir = parts.slice(0, -1).reverse().join('/');
+
+            if (_dir === '') {
+                navigate('');
+                onNavigation('');
+            } else {
+                navigate(`${_dir}/`);
+                onNavigation(`${_dir}/`);
             }
         }
-    });
-
-    return result;
-}
-
-function findRec(path: string, array: TreeviewDataItem[]) {
-    const parts = path.split('/');
-
-    if (parts.length === 1) {
-        return array.find((item) => {
-            return item.text === parts[0];
-        });
-    }
-
-    const match = array.find((item) => {
-        return item.text === parts[0];
-    });
-
-    if (match) {
-        return findRec(parts.slice(1).join('/'), match.items);
-    }
-
-    return match;
-}
-// #endregion
-
-
-export function FileBrowserTreeview(props) {
-    const selected = props.selected;
-    const [data, setData] = useState([] as any[]);
-    const [loginInfo] = useLocalStorage('loginInfo', null);
-
-    const fetchData = useCallback(async () => {
-        // @ts-ignore
-        const bucket = (loginInfo as {bucket: string}).bucket;
-        // @ts-ignore
-        const client = new S3Client(loginInfo);
-        const rawData : any[] = await client.ls(bucket, '.');
-        const tmpData : TreeviewDataItem[] = [];
-
-        rawData.forEach(item => {
-            if (item.Key.endsWith('/')) {
-                const newItem : TreeviewDataItem = {
-                    text: item.Key.slice(0, -1).split('/').pop(),
-                    path: item.Key,
-                    items: [],
-                    hasChildren: false,
-                    expanded: false,
-                    selected: selected === item.Key
-                };
-
-                tmpData.push(newItem);
-            }
-        });
-
-        const treeviewData : TreeviewDataItem[] = listToTree(tmpData);
-
-        setData(treeviewData);
-
-    }, [data]);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
+    }, [])
 
     return (
         <>
-            <Treeview data={data} selected={selected} />
+            <Treeview {...rest}
+                data={data}
+                selected={selected}
+                onItemClick={onItemClick} />
         </>
     );
 }
