@@ -4,46 +4,67 @@ export class S3Client {
 
     // #region fields
     private _client: AWS.S3;
-    private _endpoint: AWS.Endpoint;
-    // #endregion
-
-
-    // #region properties
-    get endpoint() {
-        return this._endpoint;
-    }
     // #endregion
 
 
     // #region constructor
-    constructor({key, secret, region}) {
+    constructor({key, secret, region}: {key: string, secret: string, region: string}) {
         this._client = new AWS.S3({
             accessKeyId: key,
             secretAccessKey: secret,
             region: region
         });
-        this._endpoint = this._client.endpoint;
     }
     // #endregion
 
+
     // #region methods
-    async ls(bucket: string, dir?: string) {
-        const isRoot = dir === undefined || dir === '/';
-        const isAll = dir === '.' || dir?.trim() === '';
+
+    // #region ls
+    async ls(bucket: string, dir: string = '') {
+        const _dir = dir.trim();
+
+        if (_dir === '' || _dir ==='/') {
+            return this.lsRoot(bucket);
+        }
+
+        return this.lsDir(bucket, _dir);
+    }
+    async lsRoot(bucket: string) {
+        const params : AWS.S3.ListObjectsRequest = {
+            Bucket: bucket,
+            Delimiter: '/'
+        };
+
+        return this._lsInternal(params);
+    }
+    async lsDir(bucket: string, dir: string = '') {
+        const _dir = dir.trim();
+        const _hasSlash = _dir.endsWith('/');
+
+        if (_dir === '' || _dir === '/') {
+            return this.lsRoot(bucket);
+        }
 
         const params : AWS.S3.ListObjectsRequest = {
             Bucket: bucket,
-            Delimiter: isRoot ? '\\/' : undefined,
-            Prefix: isRoot ? undefined : dir.endsWith('/') ? dir : `${dir}/`
+            Prefix: _hasSlash ? _dir : `${_dir}/`,
+            Delimiter: '/'
+        }
+
+        return this._lsInternal(params);
+    }
+
+    private async _lsInternal(params : AWS.S3.ListObjectsRequest) {
+        const result : AWS.S3.ListObjectsOutput = {
+            Name: params.Bucket,
+            Prefix: params.Prefix,
+            Delimiter: params.Delimiter,
+            Contents: [],
+            CommonPrefixes: []
         }
         let isTruncated = true;
         let marker;
-        const rawResult : AWS.S3.Object[] = [];
-
-        if (isAll) {
-            delete params.Delimiter;
-            delete params.Prefix;
-        }
 
         while (isTruncated) {
             if (marker !== undefined) {
@@ -52,9 +73,13 @@ export class S3Client {
 
             const response = await this._client.listObjects(params).promise();
 
-            response.Contents!.forEach((item: AWS.S3.Object) => {
-                rawResult.push(item);
-            });
+            if (response.Contents?.length) {
+                result.Contents!.push(...response.Contents)
+            }
+
+            if (response.CommonPrefixes?.length) {
+                result.CommonPrefixes!.push(...response.CommonPrefixes)
+            }
 
             isTruncated = response.IsTruncated!;
 
@@ -63,116 +88,73 @@ export class S3Client {
             }
         }
 
-        if (isAll) {
-            return rawResult.sort();
-        }
-
-        const result = rawResult
-            .filter(item => {
-                const key = item.Key!;
-
-                // process root
-                if (isRoot) {
-                    return key.indexOf('/') === key.lastIndexOf('/');
-                }
-
-                const prefix = dir.endsWith('/') ? dir : `${dir}/`;
-
-                // skip self
-                if (key === prefix) {
-                    return false;
-                }
-
-                if (key.indexOf(prefix) !== 0) {
-                    return false;
-                }
-
-                const subKey = key.replace(prefix, '');
-
-                return subKey.indexOf('/') === subKey.lastIndexOf('/')
-            })
-            .sort();
-
         return result;
     }
+    // #endregion
 
+    // #region mkdir
     async mkdir(bucket: string, dir: string) {
-        if (dir === '') {
-            return Promise.reject('Dir name should not be empty');
+        const _dir = dir.trim();
+        const _hasSlash = _dir.endsWith('/');
+
+        if (_dir === '') {
+            return Promise.reject('Directory name should not be empty.');
         }
 
-        const parts = dir.split('/');
-        const length = parts.length;
-
-        if (length > 1) {
-            return Promise.all(parts.map(async (part, index) => {
-                const crumbs = parts.slice(0, index);
-                crumbs.push(part);
-                await this._mkdirInternal(bucket, crumbs.join('/'));
-            }));
+        if (_dir === '/') {
+            return Promise.reject(' Directory name is invalid.');
         }
 
-        return this._mkdirInternal(bucket, dir);
+        return this._mkdirInternal(bucket, _hasSlash ? _dir : `${_dir}/`);
     }
 
-    private async _mkdirInternal(bucket: string, dir: string) {
+    private async _mkdirInternal(bucket: string, directory: string) {
         const params : AWS.S3.PutObjectRequest = {
             Bucket: bucket,
-            Key: dir.endsWith('/') ? dir : `${dir}/`
+            Key: directory
         }
-        const result = await this._client.putObject(params)
+
+        return this._client.putObject(params)
             .promise()
             .then(promiseResult => {
-                console.log(`Directory '${dir}' successfully created!`);
+                console.log(`Directory '${directory}' successfully created!`);
                 return promiseResult;
             })
             .catch(reason => {
-                console.error(`Directory '${dir} not created: ${reason}`);
+                console.error(`Directory '${directory} not created: ${reason}`);
             });
-
-        return result;
     }
+    // #endregion
 
-    async upload(bucket: string, file: string, content: Blob) {
-        const dir = file.split('/').slice(0, -1).join('/');
+    // #region rm
+    async rm(bucket: string, file: string) {
+        const _file = file.trim();
+        const _hasSlash = _file.endsWith('/');
 
-        if (dir !== '') {
-            await this.mkdir(bucket, dir);
+        if (_file === '') {
+            return Promise.reject('File name should not be empty.');
         }
 
-        const params : AWS.S3.PutObjectRequest = {
-            Bucket: bucket,
-            Key: file,
-            Body: content
-        };
-
-        const result = await this._client.upload(params).promise();
-
-        return result;
-    }
-
-    async rm(bucket: string, path: string) {
-        if (path.endsWith('')) {
-            return Promise.reject('Path should be file');
+        if (_hasSlash) {
+            return Promise.reject('File name is invalid.');
         }
 
-        return this._rmInternal(bucket, path);
+        return this._rmInternal(bucket, _file);
     }
 
     async rmdir(bucket: string, dir: string) {
-        const toDelete = await this.ls(bucket, dir === '/' ? undefined : dir);
+        const _dir = dir.trim();
+        const hasSlash = _dir.endsWith('/');
 
-        await Promise.all(toDelete.map(async (item) => {
-            const key = item.Key!;
+        if (_dir === '') {
+            return Promise.reject('Directory name should not be empty');
+        }
 
-            if (key.endsWith('')) {
-                return this.rmdir(bucket, key);
-            } else {
-                return this.rm(bucket, key);
-            }
-        }));
+        if (_dir === '/') {
+            return Promise.reject('Directory name invalid.');
+        }
 
-        return this._rmInternal(bucket, dir.endsWith('/') ? dir : `${dir}/`);
+        return this._rmInternal(bucket, hasSlash ? _dir : `${_dir}/`);
     }
 
     private async _rmInternal(bucket: string, key: string) {
@@ -181,9 +163,29 @@ export class S3Client {
             Key: key
         };
 
-        const result = await this._client.deleteObject(params).promise();
+        return this._client.deleteObject(params).promise();
+    }
+    // #endregion
 
-        return result;
+    async upload(bucket: string, file: string, content: Blob) {
+        const _file = file.trim();
+        const _hasSlash = file.endsWith('.');
+
+        if (_file === '') {
+            return Promise.reject('File name should not be empty.')
+        }
+
+        if (_hasSlash) {
+            return Promise.reject('File name is invalid.')
+        }
+
+        const params : AWS.S3.PutObjectRequest = {
+            Bucket: bucket,
+            Key: file,
+            Body: content
+        };
+
+        return this._client.upload(params).promise();
     }
     // #endregion
 
