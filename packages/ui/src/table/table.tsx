@@ -24,7 +24,7 @@ export function Table(props) {
                                 <td>
                                     {
                                         item.hasChildren
-                                            ? <Link reloadDocument to={item.path}>
+                                            ? <Link to={item.path}>
                                                 <Icon icon={folderIcon} />
                                                 {item.text}
                                             </Link>
