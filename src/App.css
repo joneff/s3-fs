@@ -106,3 +106,24 @@
 .table tbody tr:nth-child(even) {
     background-color: #fafafa;
 }
+
+
+.upload {
+    position: relative;
+    overflow: hidden;
+}
+.upload .real-upload {
+    padding: 0 !important;
+    position: absolute;
+    font: inherit;
+    font-size: 10rem;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    opacity: 0;
+}
+.upload .fake-button {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+}

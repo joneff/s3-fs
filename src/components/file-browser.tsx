@@ -14,6 +14,7 @@ type FileBrowserProps = {
     onNeedData: (dir: string) => void,
     onNavigation: (cwd: string) => void,
     onMkDir: () => void
+    onUpload: (event: React.SyntheticEvent) => void
 };
 
 export function FileBrowser(props: FileBrowserProps & React.HTMLAttributes<HTMLDivElement>) {
@@ -24,6 +25,7 @@ export function FileBrowser(props: FileBrowserProps & React.HTMLAttributes<HTMLD
         onNeedData,
         onNavigation,
         onMkDir: _onMkDir,
+        onUpload: _onUpload,
         ...rest
     } = props;
 
@@ -33,6 +35,15 @@ export function FileBrowser(props: FileBrowserProps & React.HTMLAttributes<HTMLD
 
         if (typeof _onMkDir === 'function') {
             await _onMkDir();
+        }
+    }
+
+    async function onUpload(event: React.SyntheticEvent) {
+        event.preventDefault();
+        event.stopPropagation()
+
+        if (typeof _onUpload === 'function') {
+            await _onUpload(event);
         }
     }
 
@@ -51,6 +62,12 @@ export function FileBrowser(props: FileBrowserProps & React.HTMLAttributes<HTMLD
                     </ToolbarItem>
                     <ToolbarSpacer />
                     <Button onClick={async (event) => {await onMkDir(event)}}>Create directory</Button>
+                    <ToolbarItem>
+                        <div className='upload'>
+                            <Button className='fake-upload'>Upload file</Button>
+                            <input className='real-upload' type='file' onChange={async (evnet: React.SyntheticEvent) => { await onUpload(event)}} />
+                        </div>
+                    </ToolbarItem>
                 </Toolbar>
                 <FileBrowserTable
                     data={data.files}

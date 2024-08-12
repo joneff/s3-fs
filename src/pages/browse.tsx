@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from '@uidotdev/usehooks';
 
-import { useFetchData, useMkDir, DataItem } from '../utils';
+import { useFetchData, useMkDir, useUpload, DataItem } from '../utils';
 import { FileBrowser } from '../components';
 
 type LoginInfo = {
@@ -21,6 +21,7 @@ export default function BrowserPage() {
     const [pathExists, setPathExists] = useState(undefined);
     const fetchData = useFetchData(loginInfo!);
     const mkDir = useMkDir(loginInfo);
+    const uploadFile = useUpload(loginInfo);
 
     useEffect(() => {
         if (loginInfo === null) {
@@ -69,6 +70,19 @@ export default function BrowserPage() {
         });
     }
 
+    async function handleUpload(event) {
+        const target : HTMLInputElement = event.target;
+        const files = target.files;
+
+        if (files) {
+            for (const file of files) {
+                await uploadFile(`${cwd}${file.name}`, file);
+            }
+        }
+
+        target.value = '';
+    }
+
     return (
         <>
             {pathExists === undefined && (
@@ -81,6 +95,7 @@ export default function BrowserPage() {
                     onNeedData={() => {}}
                     onNavigation={handleNavigation}
                     onMkDir={handleMkDir}
+                    onUpload={handleUpload}
                 ></FileBrowser>
             )}
             {pathExists === false && (
