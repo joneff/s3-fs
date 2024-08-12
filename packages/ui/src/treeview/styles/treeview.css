@@ -2,6 +2,9 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: var(--treeview-font-family, inherit);
+    font-size: var(--treeview-font-size, 1rem);
+    line-height: var(--treeview-line-height, 1.5);
 }
 .treeview *,
 .treeview *::before,
@@ -34,12 +37,14 @@
     cursor: pointer;
 }
 .treeview-leaf {
-    padding: 4px 8px;
-    border-radius: 4px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: transparent;
-    color: inherit;
+    padding-inline: var(--treeview-item-padding-x, .625rem);
+    padding-block: var(--treeview-item-padding-y, .375rem);
+    border-radius: var(--treeview-item-border-radius, .25rem);
+    border-width: var(--treeview-item-border-width, 1px);
+    border-style: var(--treeview-item-border-style, solid);
+    background-color: var(--treeview-item-bg, transparent);
+    color: var(--treeview-item-text, inherit);
+    border-color: var(--treeview-item-border, transparent);
     display: inline-flex;
     gap: 4px;
     flex-flow: row nowrap;
@@ -48,12 +53,14 @@
     user-select: none;
     text-decoration: none;
 }
-.treeview-leaf:hover {
-    border-color: #cccccc;
-    background-color: #fafafa;
+.treeview-leaf:hover,
+.treeview-leaf.hover {
+    background-color: var(--treeview-item-hover-bg, #f8f8f8);
+    color: var(--treeview-item-hover-text, #494949);
+    border-color: var(--treeview-item-hover-border, #f8f8f8);
 }
 .treeview-leaf.selected {
-    border-color: #336699;
-    color: #ffffff;
-    background-color: #336699;
+    background-color: var(--treeview-item-selected-bg, #622331);
+    color: var(--treeview-item-selected-text, #ffffff);
+    border-color: var(--treeview-item-selected-border, #622331);
 }

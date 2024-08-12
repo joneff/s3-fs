@@ -1,4 +1,7 @@
 import esbuild from 'rollup-plugin-esbuild';
+import css from 'rollup-plugin-import-css';
+import postcss from 'rollup-plugin-postcss';
+
 import * as glob from 'glob';
 
 const typescriptOptions = {
@@ -6,7 +9,11 @@ const typescriptOptions = {
 };
 
 const plugins = [
-    esbuild(typescriptOptions)
+    esbuild(typescriptOptions),
+    // css(),
+    postcss({
+        extensions: [ '.css' ],
+    })
 ];
 
 const srcFiles = glob.globSync('./src/**/*.ts');
@@ -38,7 +45,11 @@ export default [
             'react-dom'
         ],
         plugins: plugins
-    }
+    },
+    // #endregion
+
+
+    // #region styles
     // #endregion
 
 ];
