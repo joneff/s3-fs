@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from '@uidotdev/usehooks';
 
-import { useFetchData, DataItem } from '../utils';
+import { useFetchData, useMkDir, DataItem } from '../utils';
 import { FileBrowser } from '../components';
 
 type LoginInfo = {
@@ -20,6 +20,7 @@ export default function BrowserPage() {
     const [cwd, setCwd] = useState(useParams()['*'] || '');
     const [pathExists, setPathExists] = useState(undefined);
     const fetchData = useFetchData(loginInfo!);
+    const mkDir = useMkDir(loginInfo);
 
     useEffect(() => {
         if (loginInfo === null) {
@@ -52,8 +53,20 @@ export default function BrowserPage() {
     }, [cwd]);
 
     function handleNavigation(cwd: string) {
-        console.log('handleNavigation ', cwd);
         setCwd(cwd);
+    }
+
+    async function handleMkDir() {
+        const dir = prompt('Directory name');
+
+        if (dir === '' || dir === null) {
+            return;
+        }
+
+        await mkDir(`${cwd}${dir}`).then(result => {
+            navigate(cwd);
+            setCwd(cwd);
+        });
     }
 
     return (
@@ -67,6 +80,7 @@ export default function BrowserPage() {
                     cwd={cwd}
                     onNeedData={() => {}}
                     onNavigation={handleNavigation}
+                    onMkDir={handleMkDir}
                 ></FileBrowser>
             )}
             {pathExists === false && (
